@@ -1,0 +1,63 @@
+{% extends "user/base_user.html" %}
+{% block title %}My QR Code &middot; {{ app_name }}{% endblock %}
+{% block user_content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-0">Your QR code</h2>
+  <p class="text-muted mb-0">Download it, print it, and place it on your vehicle.</p>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-5">
+    <div class="card text-center">
+      <div class="card-body p-4">
+        <div class="qr-box mb-3">
+          <img src="{{ qr_data_uri }}" alt="ResQLink QR code" class="img-fluid" style="max-width:220px;">
+        </div>
+        <div class="d-grid gap-2">
+          <a href="{{ url_for('qr_download') }}" class="btn btn-brand"><i class="bi bi-download"></i> Download PNG</a>
+          <button class="btn btn-outline-secondary" type="button" data-copy="{{ qr_url }}"><i class="bi bi-clipboard"></i> Copy QR link</button>
+          <form method="post" action="{{ url_for('qr_toggle') }}" class="m-0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% if user.qr_enabled %}
+              <button class="btn btn-outline-warning w-100" type="submit"><i class="bi bi-pause-circle"></i> Deactivate QR</button>
+            {% else %}
+              <button class="btn btn-outline-success w-100" type="submit"><i class="bi bi-play-circle"></i> Activate QR</button>
+            {% endif %}
+          </form>
+          <form method="post" action="{{ url_for('qr_regenerate') }}" data-confirm="Regenerate? Old stickers will stop working and this cannot be undone.">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-outline-danger w-100" type="submit"><i class="bi bi-arrow-repeat"></i> Regenerate QR</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3"><i class="bi bi-info-circle text-primary"></i> About this QR</h5>
+        <ul class="list-group list-group-flush mb-3">
+          <li class="list-group-item px-0 d-flex justify-content-between">
+            <span class="text-muted">Status</span>
+            {% if user.qr_enabled %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+          </li>
+          <li class="list-group-item px-0 d-flex justify-content-between">
+            <span class="text-muted">Link</span>
+            <span class="text-truncate ms-3 small text-primary">{{ qr_url }}</span>
+          </li>
+          <li class="list-group-item px-0 d-flex justify-content-between">
+            <span class="text-muted">Generated</span>
+            <span data-utc="{{ user.qr_created_at|utc }}"></span>
+          </li>
+        </ul>
+        <h6 class="fw-bold"><i class="bi bi-shield-lock text-success"></i> Privacy note</h6>
+        <p class="text-muted small mb-0">
+          This link contains a random unguessable token only &mdash; no name, email or phone number
+          is embedded. If anyone scans it, they must complete OTP verification before any contact
+          details are revealed, and the access is recorded in your history.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

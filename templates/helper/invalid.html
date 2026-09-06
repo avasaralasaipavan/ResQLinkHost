@@ -1,0 +1,14 @@
+{% extends "helper/base_helper.html" %}
+{% block title %}QR Not Recognised &middot; {{ app_name }}{% endblock %}
+{% block helper_content %}
+<div class="text-center py-4">
+  <div class="mx-auto mb-3 bg-danger-subtle rounded-circle d-flex align-items-center justify-content-center" style="width:72px;height:72px;">
+    <i class="bi bi-qr-code text-danger" style="font-size:2rem;"></i>
+  </div>
+  <h4 class="fw-bold mb-1">This QR code is not active</h4>
+  <p class="text-muted small mb-4">
+    The code may be invalid, deactivated by its owner, or the associated account may no longer be active.
+  </p>
+  <a href="{{ url_for('index') }}" class="btn btn-outline-dark"><i class="bi bi-house"></i> Back to ResQLink</a>
+</div>
+{% endblock %}

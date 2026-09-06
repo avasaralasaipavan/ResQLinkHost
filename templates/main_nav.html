@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block topbar %}
+<nav class="navbar navbar-app sticky-top">
+  <div class="container-xxl px-3 px-md-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+      <i class="bi bi-shield-plus brand-pulse"></i>
+      <span class="font-brand">ResQLink</span>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      {% if current_user %}
+        {% if current_user.is_admin %}
+          <a class="btn btn-sm btn-outline-light" href="{{ url_for('admin_dashboard') }}"><i class="bi bi-diagram-2"></i> Admin</a>
+        {% else %}
+          <a class="btn btn-sm btn-outline-light" href="{{ url_for('dashboard') }}"><i class="bi bi-grid"></i><span class="d-none d-md-inline"> Dashboard</span></a>
+          <form method="post" action="{{ url_for('auth_logout') }}" class="m-0">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="btn btn-sm btn-light" type="submit"><i class="bi bi-box-arrow-right"></i><span class="d-none d-md-inline"> Logout</span></button>
+          </form>
+        {% endif %}
+      {% else %}
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('auth_login') }}">Log in</a>
+        <a class="btn btn-sm btn-light" href="{{ url_for('auth_register') }}">Get started</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% set admin_items = [
+  ("dashboard", "Overview", "bi-speedometer2", url_for('admin_dashboard')),
+  ("users", "Users", "bi-people", url_for('admin_users')),
+  ("logs", "Access logs", "bi-journal-check", url_for('admin_logs')),
+] %}
+
+{% block body_class %}has-bottom-nav{% endblock %}
+
+{% block topbar %}
+<nav class="navbar navbar-app sticky-top">
+  <div class="container-xxl px-3 px-md-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('admin_dashboard') }}">
+      <i class="bi bi-shield-fill-check brand-pulse"></i>
+      <span class="font-brand">ResQLink</span>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-white-50 small d-none d-sm-inline">Admin console</span>
+      <a class="btn btn-sm btn-outline-light" href="{{ url_for('index') }}"><i class="bi bi-globe"></i></a>
+      <form method="post" action="{{ url_for('admin_logout') }}" class="m-0">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-light" type="submit"><i class="bi bi-box-arrow-right"></i><span class="d-none d-md-inline"> Logout</span></button>
+      </form>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl px-3 px-md-4 py-4">
+  <div class="row g-4">
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="card p-3">
+        <nav class="nav flex-column desk-nav gap-1">
+          <small class="text-muted text-uppercase fw-bold px-2 pb-1" style="font-size:.7rem;">Admin</small>
+          {% for key, label, icon, href in admin_items %}
+            <a class="nav-link {{ 'active' if nav == key else '' }}" href="{{ href }}">
+              <i class="bi {{ icon }}"></i> <span class="text">{{ label }}</span>
+            </a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      {% block admin_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav d-lg-none">
+  {% for key, label, icon, href in admin_items %}
+    <a href="{{ href }}" class="{{ 'active' if nav == key else '' }}">
+      <i class="bi {{ icon }}"></i>{{ label }}
+    </a>
+  {% endfor %}
+</nav>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "helper/base_helper.html" %}
+{% block title %}Verify &middot; {{ app_name }}{% endblock %}
+{% block helper_content %}
+<div class="text-center mb-4">
+  <div class="mx-auto mb-3 bg-success-subtle rounded-circle d-flex align-items-center justify-content-center" style="width:64px;height:64px;">
+    <i class="bi bi-envelope-check text-success" style="font-size:1.6rem;"></i>
+  </div>
+  <h4 class="fw-bold mb-1">Enter the code</h4>
+  <p class="text-muted small mb-0">
+    We sent a 6-digit code to
+    <strong>{{ 'your email' if pending.channel == 'email' else 'your mobile number' }}</strong>.
+  </p>
+</div>
+
+<form method="post" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="mb-3">
+    <label class="form-label" for="otp">6-digit verification code</label>
+    <input type="text" name="otp" id="otp" class="form-control otp-input" pattern="[0-9]{6}" inputmode="numeric" maxlength="6" placeholder="______" required autofocus>
+  </div>
+  <button class="btn btn-accent btn-lg w-100" type="submit"><i class="bi bi-shield-check"></i> Verify &amp; view contacts</button>
+</form>
+
+<div class="text-center mt-3 d-flex justify-content-center gap-3">
+  <form method="post" action="{{ url_for('q_resend', token=token) }}" class="d-inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-link btn-sm" type="submit"><i class="bi bi-arrow-clockwise"></i> Resend code</button>
+  </form>
+  <a href="{{ url_for('q_landing', token=token) }}" class="btn btn-link btn-sm text-muted">Change details</a>
+</div>
+{% endblock %}

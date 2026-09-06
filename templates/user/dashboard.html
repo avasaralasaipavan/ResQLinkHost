@@ -1,0 +1,97 @@
+{% extends "user/base_user.html" %}
+{% block title %}Dashboard &middot; {{ app_name }}{% endblock %}
+{% block user_content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-1">Hey, {{ user.full_name or 'there' }}!</h2>
+  <p class="text-muted mb-0">Here&rsquo;s what&rsquo;s happening with your ResQLink QR.</p>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="stat-box">
+      <h3 class="num mb-0">{{ contacts_count }}</h3>
+      <div class="lbl">Emergency contacts</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <a class="stat-box d-block text-decoration-none" href="{{ url_for('qr') }}">
+      {% if qr_url and user.qr_enabled %}
+        <h3 class="num mb-0 text-success"><i class="bi bi-qr-code"></i></h3>
+        <div class="lbl">QR active</div>
+      {% else %}
+        <h3 class="num mb-0 text-danger"><i class="bi bi-qr-code"></i></h3>
+        <div class="lbl">QR inactive</div>
+      {% endif %}
+    </a>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-box">
+      <h3 class="num mb-0">{{ stats.total }}</h3>
+      <div class="lbl">Total accesses</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="stat-box">
+      <h3 class="num mb-0">{{ stats.week }}</h3>
+      <div class="lbl">This week</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="fw-bold mb-3"><i class="bi bi-clock-history text-primary"></i> Recent QR activity</h5>
+        {% if recent %}
+          <ul class="list-group list-group-flush">
+            {% for log in recent %}
+              <li class="list-group-item px-0 d-flex justify-content-between align-items-center gap-3">
+                <div class="min-w-0">
+                  <div class="fw-semibold text-truncate">{{ log.helper_identifier }}</div>
+                  <div class="small text-muted">
+                    <span class="badge bg-light text-dark">via {{ log.channel }}</span>
+                    {% if log.contacts_displayed %}
+                      <span class="badge bg-success-subtle text-success"><i class="bi bi-check-circle"></i> contacts shown</span>
+                    {% else %}
+                      <span class="badge bg-warning-subtle text-warning-emphasis"><i class="bi bi-ban"></i> limited</span>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="small text-muted text-nowrap"><span data-utc="{{ log.accessed_at|utc }}"></span></div>
+              </li>
+            {% endfor %}
+          </ul>
+          <a href="{{ url_for('access_log') }}" class="btn btn-sm btn-outline-primary mt-2">View full history <i class="bi bi-arrow-right"></i></a>
+        {% else %}
+          <p class="text-muted mb-0">No one has scanned your QR code yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="fw-bold mb-2"><i class="bi bi-qr-code text-primary"></i> Your QR code</h5>
+        {% if contacts_count == 0 %}
+          <p class="text-muted small mb-3">You need at least one emergency contact before enabling your QR code.</p>
+          <a href="{{ url_for('contact_new') }}" class="btn btn-accent btn-sm"><i class="bi bi-person-plus"></i> Add a contact first</a>
+        {% else %}
+          <p class="text-muted small mb-3">
+            {% if user.qr_enabled %}<span class="badge bg-success">Active</span>{% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+            Your QR was {% if user.qr_created_at %}generated <span data-utc="{{ user.qr_created_at|utc }}"></span>{% else %}not yet generated{% endif %}.
+          </p>
+          <a href="{{ url_for('qr') }}" class="btn btn-brand btn-sm"><i class="bi bi-qr-code"></i> Open QR page</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="fw-bold mb-2"><i class="bi bi-sliders text-primary"></i> Protection</h5>
+        <p class="text-muted small mb-3">Limit how many times helpers can view your contacts within a time window.</p>
+        <a href="{{ url_for('settings') }}" class="btn btn-outline-brand btn-sm text-primary">Review limits <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "helper/base_helper.html" %}
+{% block title %}Emergency Access &middot; {{ app_name }}{% endblock %}
+{% block helper_content %}
+<div class="text-center mb-4">
+  <div class="mx-auto mb-3 bg-danger-subtle rounded-circle d-flex align-items-center justify-content-center" style="width:72px;height:72px;">
+    <i class="bi bi-bandaid text-danger" style="font-size:2rem;"></i>
+  </div>
+  <h4 class="fw-bold mb-1">Emergency contact access</h4>
+  <p class="text-muted small mb-0">
+    The owner of this QR code may be in an emergency. Verify yourself with a one-time code and we&rsquo;ll
+    show you who to call.
+  </p>
+</div>
+
+<form method="post" action="{{ url_for('q_send_otp', token=token) }}" novalidate>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <label class="form-label">Verify using</label>
+  <div class="btn-group w-100 mb-3" role="group" aria-label="Verification method">
+    <input type="radio" class="btn-check" name="channel" id="ch-email" value="email" checked>
+    <label class="btn btn-outline-primary" for="ch-email"><i class="bi bi-envelope"></i> Email</label>
+    <input type="radio" class="btn-check" name="channel" id="ch-mobile" value="mobile">
+    <label class="btn btn-outline-primary" for="ch-mobile"><i class="bi bi-phone"></i> Mobile number</label>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label" for="identifier">Your email or mobile number</label>
+    <input type="text" name="identifier" id="identifier" class="form-control form-control-lg" placeholder="you@example.com or +91 98765 43210" required autofocus>
+  </div>
+
+  <button class="btn btn-accent btn-lg w-100" type="submit"><i class="bi bi-send-check"></i> Send verification code</button>
+</form>
+
+<div class="alert alert-light border mt-4 mb-0">
+  <div class="d-flex gap-2">
+    <i class="bi bi-shield-lock text-success"></i>
+    <div class="small text-muted">
+      <strong>Private &amp; safe:</strong> your identity is verified and <strong>recorded for audit</strong>.
+      Contact numbers are revealed only after successful verification. Use them strictly for this emergency.
+    </div>
+  </div>
+</div>
+{% endblock %}

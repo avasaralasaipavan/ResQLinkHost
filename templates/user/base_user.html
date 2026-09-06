@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% set nav_items = [
+  ("dashboard", "Dashboard", "bi-speedometer2", url_for('dashboard')),
+  ("contacts", "Contacts", "bi-people", url_for('contacts')),
+  ("qr", "My QR", "bi-qr-code", url_for('qr')),
+  ("access", "History", "bi-clock-history", url_for('access_log')),
+  ("settings", "Security", "bi-shield-lock", url_for('settings')),
+] %}
+
+{% block body_class %}has-bottom-nav{% endblock %}
+
+{% block topbar %}
+<nav class="navbar navbar-app sticky-top">
+  <div class="container-xxl px-3 px-md-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('dashboard') }}">
+      <i class="bi bi-shield-plus brand-pulse"></i>
+      <span class="font-brand">ResQLink</span>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <span class="text-white-50 d-none d-sm-inline small">{{ current_user.full_name or current_user.email }}</span>
+      <a class="btn btn-sm btn-outline-light" href="{{ url_for('profile') }}"><i class="bi bi-person-circle"></i></a>
+      <form method="post" action="{{ url_for('auth_logout') }}" class="m-0">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="btn btn-sm btn-light" type="submit"><i class="bi bi-box-arrow-right"></i><span class="d-none d-md-inline"> Logout</span></button>
+      </form>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-xxl px-3 px-md-4 py-4">
+  <div class="row g-4">
+    <div class="col-lg-3 d-none d-lg-block">
+      <div class="card p-3">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="bg-brand-light rounded-circle d-flex align-items-center justify-content-center" style="width:44px;height:44px;">
+            <i class="bi bi-person-fill text-primary" style="font-size:1.3rem;"></i>
+          </div>
+          <div>
+            <div class="fw-bold">{{ current_user.full_name or 'ResQLink User' }}</div>
+            <div class="small text-muted">{{ current_user.email }}</div>
+          </div>
+        </div>
+        <nav class="nav flex-column desk-nav gap-1">
+          {% for key, label, icon, href in nav_items %}
+            <a class="nav-link {{ 'active' if nav == key else '' }}" href="{{ href }}">
+              <i class="bi {{ icon }}"></i> <span class="text">{{ label }}</span>
+            </a>
+          {% endfor %}
+        </nav>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      {% block user_content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-nav d-lg-none">
+  {% for key, label, icon, href in nav_items %}
+    <a href="{{ href }}" class="{{ 'active' if nav == key else '' }}">
+      <i class="bi {{ icon }}"></i>{{ label }}
+    </a>
+  {% endfor %}
+</nav>
+{% endblock %}

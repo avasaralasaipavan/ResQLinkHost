@@ -1,0 +1,77 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Access Logs &middot; {{ app_name }}{% endblock %}
+{% block admin_content %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+  <div>
+    <h2 class="fw-bold mb-0">Access logs</h2>
+    <p class="text-muted mb-0">Every QR code scan, verification and outcome.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <div class="btn-group" role="group">
+      <a href="{{ url_for('admin_logs') }}" class="btn btn-sm {{ 'btn-brand' if not flagged_only else 'btn-outline-brand text-primary' }}">All</a>
+      <a href="{{ url_for('admin_logs', flagged_only='1') }}" class="btn btn-sm {{ 'btn-danger text-white' if flagged_only else 'btn-outline-danger' }}"><i class="bi bi-flag"></i> Flagged</a>
+    </div>
+    <form method="get" class="d-flex gap-2">
+      {% if flagged_only %}<input type="hidden" name="flagged_only" value="1">{% endif %}
+      <input type="search" name="q" class="form-control form-control-sm" placeholder="Search helper" value="{{ search }}">
+      <button class="btn btn-brand btn-sm" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <div class="table-responsive-sm">
+      <table class="table table-hover align-middle">
+        <thead>
+          <tr>
+            <th>When</th>
+            <th>Helper</th>
+            <th>Method</th>
+            <th>Outcome</th>
+            <th class="d-none d-md-table-cell">IP</th>
+            <th class="d-none d-lg-table-cell">Owner</th>
+            <th>Flag</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td class="small text-nowrap"><span data-utc="{{ log.accessed_at|utc }}"></span></td>
+              <td class="small text-break">{{ log.helper_identifier }}</td>
+              <td><span class="badge bg-light text-dark">via {{ log.channel }}</span></td>
+              <td>
+                {% if log.contacts_displayed %}
+                  <span class="badge bg-success-subtle text-success">Shown</span>
+                {% else %}
+                  <span class="badge bg-warning-subtle text-warning-emphasis">Limited</span>
+                {% endif %}
+                {% if log.flagged %}<span class="badge bg-danger text-white"><i class="bi bi-flag"></i></span>{% endif %}
+              </td>
+              <td class="small text-muted d-none d-md-table-cell">{{ log.ip_address or '-' }}</td>
+              <td class="small d-none d-lg-table-cell text-break">{{ log.user.email if log.user else '-' }}</td>
+              <td class="text-end">
+                {% if log.flagged and log.flag_reason %}
+                  <div class="small text-danger mb-1">{{ log.flag_reason }}</div>
+                {% endif %}
+                <form method="post" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <input type="hidden" name="log_id" value="{{ log.id }}">
+                  <input type="hidden" name="from_flagged" value="{{ '1' if flagged_only else '' }}">
+                  {% if log.flagged %}
+                    <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-x-circle"></i> Unflag</button>
+                  {% else %}
+                    <button class="btn btn-sm btn-outline-warning" type="submit"><i class="bi bi-flag"></i> Flag</button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="7" class="text-center text-muted py-5"><i class="bi bi-inbox"></i> No log entries.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

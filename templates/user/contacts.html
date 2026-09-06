@@ -1,0 +1,52 @@
+{% extends "user/base_user.html" %}
+{% block title %}Emergency Contacts &middot; {{ app_name }}{% endblock %}
+{% block user_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <h2 class="fw-bold mb-0">Emergency contacts</h2>
+    <p class="text-muted mb-0">Who helpers should reach when they scan your QR.</p>
+  </div>
+  <a href="{{ url_for('contact_new') }}" class="btn btn-accent"><i class="bi bi-person-plus"></i> <span class="d-none d-sm-inline">Add contact</span></a>
+</div>
+
+{% if contacts %}
+  <div class="row g-3">
+    {% for c in contacts %}
+      <div class="col-md-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <div class="d-flex align-items-start gap-3">
+              <div class="bg-brand-light rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:44px;height:44px;">
+                <i class="bi bi-person-circle text-primary" style="font-size:1.3rem;"></i>
+              </div>
+              <div class="flex-grow-1 min-w-0">
+                <div class="fw-bold">{{ c.name }} <span class="badge contact-chip ms-1">{{ c.relationship }}</span></div>
+                <div class="small text-muted mt-1">
+                  <div><i class="bi bi-telephone"></i> <a href="tel:{{ c.phone }}" class="text-decoration-none">{{ c.phone }}</a></div>
+                  {% if c.email %}<div><i class="bi bi-envelope"></i> {{ c.email }}</div>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-2 mt-3">
+              <a href="{{ url_for('contact_edit', contact_id=c.id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+              <form method="post" action="{{ url_for('contact_delete', contact_id=c.id) }}" data-confirm="Remove this emergency contact?">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i> Remove</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card">
+    <div class="card-body text-center p-5">
+      <i class="bi bi-people display-5 text-muted"></i>
+      <h5 class="mt-3 fw-bold">No emergency contacts yet</h5>
+      <p class="text-muted">Add your family or close friends. Helpers will be able to call them after verifying their identity.</p>
+      <a href="{{ url_for('contact_new') }}" class="btn btn-brand"><i class="bi bi-person-plus"></i> Add your first contact</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

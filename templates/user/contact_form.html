@@ -1,0 +1,38 @@
+{% extends "user/base_user.html" %}
+{% block title %}{{ 'Edit contact' if contact else 'Add contact' }} &middot; {{ app_name }}{% endblock %}
+{% block user_content %}
+<div class="mb-4">
+  <h2 class="fw-bold mb-0">{{ 'Edit emergency contact' if contact else 'Add emergency contact' }}</h2>
+  <p class="text-muted mb-0">These details are shared with verified helpers only.</p>
+</div>
+
+<div class="card">
+  <div class="card-body p-4">
+    <form method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Full name *</label>
+          <input type="text" name="name" class="form-control" value="{{ form.get('name', contact.name if contact else '') }}" placeholder="e.g. Rohit Kumar" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Relationship *</label>
+          <input type="text" name="relationship" class="form-control" value="{{ form.get('relationship', contact.relationship if contact else '') }}" placeholder="e.g. Brother, Spouse" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Phone number *</label>
+          <input type="tel" name="phone" class="form-control" value="{{ form.get('phone', contact.phone if contact else '') }}" placeholder="+91 98765 43210" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Email <span class="text-secondary">(optional)</span></label>
+          <input type="email" name="email" class="form-control" value="{{ form.get('email', contact.email if contact else '') }}" placeholder="contact@example.com">
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-brand" type="submit"><i class="bi bi-check2"></i> {{ 'Save changes' if contact else 'Add contact' }}</button>
+        <a href="{{ url_for('contacts') }}" class="btn btn-outline-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

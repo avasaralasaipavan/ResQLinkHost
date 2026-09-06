@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}ResQLink &middot; QR-based Emergency Contacts{% endblock %}
+
+{% block topbar %}
+<nav class="navbar navbar-app sticky-top">
+  <div class="container-xxl px-3 px-md-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url_for('index') }}">
+      <i class="bi bi-shield-plus brand-pulse"></i>
+      <span class="font-brand">ResQLink</span>
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      {% if current_user %}
+        <a class="btn btn-sm btn-outline-light" href="{{ url_for('dashboard') }}"><i class="bi bi-grid"></i><span class="d-none d-md-inline"> Dashboard</span></a>
+        <form method="post" action="{{ url_for('auth_logout') }}" class="m-0">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button class="btn btn-sm btn-light" type="submit"><i class="bi bi-box-arrow-right"></i></button>
+        </form>
+      {% else %}
+        <a class="btn btn-outline-light" href="{{ url_for('auth_login') }}">Log in</a>
+        <a class="btn btn-light" href="{{ url_for('auth_register') }}">Get started</a>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<section class="hero text-center">
+  <div class="container-xxl px-3 px-md-4">
+    <span class="badge badge-soft rounded-pill px-3 py-2 mb-3">
+      <i class="bi bi-shield-check"></i> Secure QR emergency contacts for your vehicle
+    </span>
+    <h1 class="display-5 fw-bold mb-3">Get help to your loved ones,<br class="d-none d-md-block"> right when it matters.</h1>
+    <p class="lead mx-auto" style="max-width:640px;">
+      Stick a ResQLink QR code on your vehicle. If you are ever in an accident, any helper who scans
+      it can securely &mdash; after OTP verification &mdash; reach your family. No private numbers exposed.
+    </p>
+    <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center mt-4">
+      <a class="btn btn-accent btn-lg" href="{{ url_for('auth_register') }}"><i class="bi bi-person-plus"></i> Create free account</a>
+      <a class="btn btn-outline-light btn-lg" href="{{ url_for('q_landing', token='demo') }}" onclick="return false;"><i class="bi bi-qr-code-scan"></i> I'm scanning a QR</a>
+    </div>
+  </div>
+</section>
+
+<section class="container-xxl px-3 px-md-4 py-5">
+  <div class="row g-4 text-center">
+    <div class="col-6 col-lg-3">
+      <div class="stat-box h-100">
+        <i class="bi bi-shield-lock text-primary" style="font-size:1.6rem;"></i>
+        <div class="num mt-2">Private</div>
+        <div class="lbl">No sensitive info in the QR</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-box h-100">
+        <i class="bi bi-patch-check text-success" style="font-size:1.6rem;"></i>
+        <div class="num mt-2">Verified</div>
+        <div class="lbl">OTP-verified helpers only</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-box h-100">
+        <i class="bi bi-clock-history text-warning" style="font-size:1.6rem;"></i>
+        <div class="num mt-2">Tracked</div>
+        <div class="lbl">Every access is audited</div>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="stat-box h-100">
+        <i class="bi bi-sliders text-danger" style="font-size:1.6rem;"></i>
+        <div class="num mt-2">Controlled</div>
+        <div class="lbl">Set your own access limits</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container-xxl px-3 px-md-4 pb-5">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-6">
+      <h2 class="fw-bold">How it works</h2>
+      <div class="d-flex gap-3 mt-4">
+        <div class="contact-chip px-3 py-2" style="min-width:44px;text-align:center;">1</div>
+        <div>
+          <h6 class="mb-1">Register &amp; verify</h6>
+          <p class="text-muted mb-0">Sign up with your email and confirm it with an OTP code.</p>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-3">
+        <div class="contact-chip px-3 py-2" style="min-width:44px;text-align:center;">2</div>
+        <div>
+          <h6 class="mb-1">Add emergency contacts</h6>
+          <p class="text-muted mb-0">Add family or friends who should be notified in an emergency.</p>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-3">
+        <div class="contact-chip px-3 py-2" style="min-width:44px;text-align:center;">3</div>
+        <div>
+          <h6 class="mb-1">Print your QR code</h6>
+          <p class="text-muted mb-0">Download your unique QR and place it on your vehicle.</p>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-3">
+        <div class="contact-chip px-3 py-2" style="min-width:44px;text-align:center;">4</div>
+        <div>
+          <h6 class="mb-1">Helper scans &amp; verifies</h6>
+          <p class="text-muted mb-0">In an accident, a helper verifies by OTP and calls your contacts instantly.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card p-4 p-md-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-shield-exclamation text-danger" style="font-size:1.5rem;"></i>
+          <h5 class="mb-0 fw-bold">Privacy that protects you</h5>
+        </div>
+        <ul class="list-unstyled mb-0 d-grid gap-2">
+          <li><i class="bi bi-check-circle-fill text-success"></i> Your phone numbers are never embedded in the QR code.</li>
+          <li><i class="bi bi-check-circle-fill text-success"></i> Contacts are shown only after the helper verifies by email or mobile OTP.</li>
+          <li><i class="bi bi-check-circle-fill text-success"></i> You see exactly who accessed your info and when.</li>
+          <li><i class="bi bi-check-circle-fill text-success"></i> Cap how many times contacts can be viewed per hour.</li>
+          <li><i class="bi bi-check-circle-fill text-success"></i> Deactivate or regenerate your QR any time.</li>
+        </ul>
+        <a href="{{ url_for('auth_register') }}" class="btn btn-brand btn-lg mt-4"><i class="bi bi-arrow-right-circle"></i> Secure my vehicle now</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
